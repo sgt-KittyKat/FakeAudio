@@ -3,3 +3,44 @@
 *env*
 
 data/
+# Python
+
+**pycache**/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual env
+
+venv/
+.env/
+
+# Models / checkpoints
+
+*.pt
+*.pth
+*.ckpt
+
+# Logs
+
+logs/
+*.log
+
+# Notebooks checkpoints
+
+.ipynb_checkpoints/
+
+# OS
+
+.DS_Store
+Thumbs.db
+
+# IDE
+
+.vscode/
+.idea/
+
+# Experiment tracking
+
+mlruns/
+wandb/
