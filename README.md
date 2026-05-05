@@ -1,6 +1,6 @@
 # Audio Feature Pipeline
 
-This project now includes a preprocessing pipeline for the `in_the_wild` audio deepfake dataset that extracts fixed-length `4s` chunks for either `MFCC` or `LFCC` and saves each split as a single `.npz` array store.
+This project now includes preprocessing pipelines for the `in_the_wild` audio deepfake dataset that extract fixed-length `4s` chunks for `MFCC`, `LFCC`, and `CQCC`, and save each split as a single `.npz` array store.
 
 ## What the pipeline does
 
@@ -9,7 +9,7 @@ This project now includes a preprocessing pipeline for the `in_the_wild` audio d
 - Loads raw `.wav` files from `data/release_in_the_wild/{fake,real}`.
 - Applies optional pre-emphasis with coefficient `0.97`.
 - Chunks audio into `4s` windows.
-- Extracts either `MFCC` or `LFCC` features with `25 ms` frames and `10 ms` hop.
+- Extracts `MFCC`, `LFCC`, or `CQCC` features with a fixed `[N, C, F, T]` output contract.
 - Adds `delta` and `delta-delta` channels by default.
 - Forces every chunk tensor to a fixed `[N, C, F, T]` layout with `T=400`.
 - Saves one `.npz` feature store per split instead of one file per chunk.
@@ -19,8 +19,9 @@ This project now includes a preprocessing pipeline for the `in_the_wild` audio d
 
 - `data/processed/mfcc`
 - `data/processed/lfcc`
+- `data/processed/cqcc`
 
-Each directory is independent, so rerunning MFCC extraction does not touch LFCC outputs and vice versa.
+Each directory is independent, so rerunning one feature extraction does not touch the others.
 
 Each feature directory contains:
 
@@ -38,22 +39,46 @@ Each feature directory contains:
 
 ## Commands
 
+Run all three preprocessing methods in one pass:
+
+```bash
+venv/bin/python scripts/run_all_preprocessing.py
+```
+
 MFCC extraction:
 
 ```bash
-python3 scripts/extract_mfcc.py
+venv/bin/python scripts/extract_mfcc.py
 ```
 
 LFCC extraction:
 
 ```bash
-python3 scripts/extract_lfcc.py
+venv/bin/python scripts/extract_lfcc.py
+```
+
+CQCC extraction:
+
+```bash
+venv/bin/python scripts/extract_cqcc.py
 ```
 
 Quick smoke test on a small subset:
 
 ```bash
-python3 scripts/extract_mfcc.py --limit-files 12 --output-dir data/processed/mfcc_smoke
+venv/bin/python scripts/run_all_preprocessing.py --limit-files 12 --processed-root /private/tmp/feature_pipeline_smoke
+```
+
+Validate that all feature methods produced the same artifact structure and aligned split metadata:
+
+```bash
+venv/bin/python scripts/validate_feature_outputs.py --processed-root data/processed --methods mfcc lfcc cqcc
+```
+
+Inspect any processed feature store:
+
+```bash
+venv/bin/python inspect_preprocessed_features.py --feature-type mfcc
 ```
 
 ## Tensor format
@@ -101,6 +126,8 @@ train_meta = pd.read_csv("data/processed/mfcc/train_metadata.csv")
 - The split assignment is speaker-disjoint and deterministic from `--split-seed`.
 - `feature_stats.json` contains train-split coefficient statistics for later normalization in the modeling pipeline.
 - `T=400` is enforced after extraction so every split array is stackable without shape drift.
+- `MFCC`, `LFCC`, and `CQCC` now share the same split logic, metadata schema, and artifact layout.
+
 # Deepfake Audio Detection (In-the-Wild Dataset)
 
 ## Overview
@@ -116,77 +143,6 @@ Dataset: https://www.kaggle.com/datasets/abdallamohamed312/in-the-wild-dataset
 * Real and fake speech from public figures
 * High variability (noise, compression, etc.)
 
-## Project Structure
-```text
-deepfake-audio-detection/
-│── data/
-│   ├── raw/
-│   ├── processed/
-│
-│── src/
-│   ├── data/
-│   │   ├── dataset.py
-│   │   ├── preprocessing.py
-│   │
-│   ├── models/
-│   │   ├── model.py
-│   │
-│   ├── training/
-│   │   ├── train.py
-│   │   ├── evaluate.py
-│
-│   ├── utils/
-│
-│── configs/
-│── experiments/
-│── notebooks/
-│── requirements.txt
-│── README.md
-│── .gitignore
-```
-
-## Setup
-
-```bash
-git clone <repo_url>
-cd deepfake-audio-detection
-
-python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
-
-pip install -r requirements.txt
-```
-
-## Data Preparation
-
-Download dataset manually from Kaggle and place in:
-
-data/raw/
-
-Run preprocessing:
-
-```bash
-python src/data/preprocessing.py
-```
-
-## Training
-
-```bash
-python src/training/train.py --config configs/base.yaml
-```
-
-## Evaluation
-
-```bash
-python src/training/evaluate.py
-```
-
-## Reproducibility
-
-* Fixed random seeds
-* Config-driven experiments
-* Speaker-disjoint train/test split
 
 ## Metrics
 
