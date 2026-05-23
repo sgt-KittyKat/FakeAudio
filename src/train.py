@@ -97,7 +97,10 @@ def main() -> None:
 
     model = LCNN(dropout=args.dropout).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-    criterion = nn.BCEWithLogitsLoss()
+    n_real = int((train_ds.labels == 0).sum())
+    n_fake = int((train_ds.labels == 1).sum())
+    pos_weight = torch.tensor(n_real / n_fake, dtype=torch.float32).to(device)
+    criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
     args.model_dir.mkdir(parents=True, exist_ok=True)
     best_eer = float("inf")
