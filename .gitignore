@@ -1,46 +1,61 @@
+# OS files
 .DS_Store
+Thumbs.db
 
-*env*
-
-data/
-# Python
-
-**pycache**/
-*.pyc
+# Python cache
+__pycache__/
+**/__pycache__/
+*.py[cod]
 *.pyo
 *.pyd
 
-# Virtual env
-
+# Virtual environments
 venv/
+.venv/
+env/
 .env/
 
-# Models / checkpoints
+# Dataset and generated data
+data/release_in_the_wild/
+data/processed/
+data/processed_smoke/
+data/raw/
 
+# Keep placeholders
+!data/.gitkeep
+!data/raw/.gitkeep
+
+# Logs
+logs/
+*.log
+logs_*.txt
+*_log.txt
+*_logs.txt
+
+# Feature stores
+*.npz
+
+# Models / checkpoints
+models/
 *.pt
 *.pth
 *.ckpt
 
-# Logs
+# XAI / generated outputs
+xai_outputs/
 
+# Logs
 logs/
 *.log
+logs_*.txt
 
-# Notebooks checkpoints
-
+# Notebook checkpoints
 .ipynb_checkpoints/
 
-# OS
-
-.DS_Store
-Thumbs.db
-
 # IDE
-
 .vscode/
 .idea/
 
 # Experiment tracking
-
 mlruns/
 wandb/
