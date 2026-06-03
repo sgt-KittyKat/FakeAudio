@@ -303,6 +303,18 @@ LFCC also performed strongly but did not clearly outperform MFCC or CQCC.
 Based on threshold-based detection performance, CQCC is the recommended final model, MFCC is retained as a strong alternative because it achieved the highest ROC-AUC.
 
 
+## AI Usage Declaration
+
+Generative AI tools were used as support during this project, the team used AI assistance for:
+
+* Designing and refining the `organize_audio_by_label.py` helper script used to organize flat Kaggle audio downloads into `real/` and `fake/` folders based on `meta.csv`.
+* Researching and summarizing relevant papers on audio deepfake detection methodologies.
+* Structuring and improving the project documentation.
+* Preparing and refining the project presentation.
+
+All code, outputs, preprocessing results, model training, evaluation results, and final project decisions were reviewed, tested, and validated by the team. AI-generated suggestions were not used blindly, they were checked against the project code, experiment logs, dataset structure, and final evaluation results.
+
+
 ## References
 
 Abdul, Z. K., & Al-Talabani, A. K. (2022). Mel Frequency Cepstral Coefficient and its applications: A review. IEEE Access, 10, 122136–122158.
