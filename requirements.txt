@@ -1,10 +1,10 @@
 torch
 torchaudio
-transformers
 librosa
 numpy
 pandas
 scikit-learn
+scipy
 tqdm
 matplotlib
 soundfile
